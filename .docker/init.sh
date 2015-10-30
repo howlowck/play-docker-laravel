@@ -16,9 +16,11 @@ else
   sudo -- sh -c "echo $DOCKER_IP  $DOCKER_APP_HOSTNAME >> /etc/hosts";
 fi
 
+docker-compose up -d;
 
-
-echo "\n  /*** you can now go to $DOCKER_APP_HOSTNAME  ***/  \n";
+echo "";
+echo "(ﾉ◕ヮ◕)ﾉ*:・ﾟ✧   You can now go to $DOCKER_APP_HOSTNAME ";
+echo "";
 
 unset DOCKER_IP;
 unset DOCKER_APP_HOSTNAME;
