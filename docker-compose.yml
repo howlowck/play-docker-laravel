@@ -1,0 +1,54 @@
+source:
+  image: sameersbn/mysql
+  volumes:
+    - ./:/var/www/html
+web:
+  image: howlowck/nginx-simple
+  ports:
+    - "80"
+  volumes_from:
+    - source
+  volumes:
+    - ./.docker/web/vhost.conf:/etc/nginx/sites-enabled/laravel.docker
+  links:
+    - php
+  environment:
+    - VIRTUAL_HOST=laravel.docker
+php:
+  build: ./.docker/php-fpm
+  volumes_from:
+    - source
+  volumes:
+    - ./.docker/php-fpm/php.ini:/usr/local/etc/php/php.ini
+    - ./.docker/php-fpm/entrypoint.sh:/sbin/php-fpm/entrypoint.sh
+  links:
+    - db
+  entrypoint: ["bash","/sbin/php-fpm/entrypoint.sh"]
+db:
+  image: sameersbn/mysql
+  ports:
+   - "3306"
+  volumes:
+   - /var/lib/mysql
+  environment:
+   - DB_NAME=demoDb
+   - DB_USER=demoUser
+   - DB_PASS=demoPass
+composer:
+  image: howlowck/composer-simple
+  volumes_from:
+   - source
+  working_dir: /var/www/html
+artisan:
+  image: howlowck/artisan-simple
+  volumes_from:
+   - source
+  working_dir: /var/www/html
+  links:
+   - db
+phpunit:
+  image: howlowck/phpunit-simple
+  volumes_from:
+   - source
+  working_dir: /var/www/html
+  command: ""
